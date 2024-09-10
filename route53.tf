@@ -1,6 +1,6 @@
 data "aws_route53_zone" "selected" {
   count = var.hostname_create && var.module_enabled ? 1 : 0
-  name  = var.hosted_zone
+  name  = try(local.workpace.hosted_zone, var.hosted_zone)
 }
 
 resource "aws_route53_record" "hostname" {
