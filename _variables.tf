@@ -10,6 +10,12 @@ variable "hosted_zone" {}
 
 variable "certificate_arn" {}
 
+variable "dynamic_custom_error_response" {
+  description = "Custom Error Responses to be used in dynamic block"
+  type        = any
+  default     = [{}]
+}
+
 variable "hostname_create" {
   description = "Create hostname in the hosted zone passed?"
   default     = true

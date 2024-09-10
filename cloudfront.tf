@@ -162,11 +162,16 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
-  custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = var.response_page_path
+  dynamic "custom_error_response" {
+    for_each = var.dynamic_custom_error_response
+    content {
+      error_code            = try(custom_error_response.value.error_code, 404)
+      response_code         = try(custom_error_response.value.response_code, 200)
+      response_page_path    = try(custom_error_response.value.response_page_path, var.response_page_path)
+      error_caching_min_ttl = try(custom_error_response.value.error_caching_min_ttl, 0)
+    }
   }
+
 
   web_acl_id = var.cloudfront_web_acl_id != "" ? var.cloudfront_web_acl_id : ""
 }
