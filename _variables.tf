@@ -6,7 +6,9 @@ variable "hostnames" {
   type = list(string)
 }
 
-variable "hosted_zone" {}
+variable "hosted_zone" {
+  default = null
+}
 
 variable "certificate_arn" {}
 
