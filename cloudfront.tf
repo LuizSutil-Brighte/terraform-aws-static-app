@@ -26,13 +26,13 @@ resource "aws_cloudfront_distribution" "default" {
   dynamic "origin" {
     for_each = [for i in var.dynamic_custom_origin_config : {
       domain_name              = i.domain_name
-      origin_id                = i.origin_id != "" ? i.origin_id : "default"
+      origin_id                = lookup(i, "origin_id", "default")
       path                     = lookup(i, "origin_path", null)
-      http_port                = i.http_port != "" ? i.http_port : 80
-      https_port               = i.https_port != "" ? i.https_port : 443
-      origin_protocol_policy   = i.origin_protocol_policy != "" ? i.origin_protocol_policy : "https-only"
-      origin_read_timeout      = i.origin_read_timeout
-      origin_keepalive_timeout = i.origin_keepalive_timeout
+      http_port                = lookup(i, "http_port", 80)
+      https_port               = lookup(i, "https_port" , 443)
+      origin_protocol_policy   = lookup(i, "origin_protocol_policy", "https-only")
+      origin_read_timeout      = lookup(i, "origin_read_timeout", 0)
+      origin_keepalive_timeout = lookup(i, origin_keepalive_timeout, 0)
       origin_ssl_protocols     = lookup(i, "origin_ssl_protocols", ["SSLv3", "TLSv1.1", "TLSv1.2", "TLSv1"])
       custom_header            = lookup(i, "custom_header", null)
     }]
