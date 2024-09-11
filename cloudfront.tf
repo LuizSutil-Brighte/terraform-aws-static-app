@@ -32,7 +32,7 @@ resource "aws_cloudfront_distribution" "default" {
       https_port               = lookup(i, "https_port" , 443)
       origin_protocol_policy   = lookup(i, "origin_protocol_policy", "https-only")
       origin_read_timeout      = lookup(i, "origin_read_timeout", 0)
-      origin_keepalive_timeout = lookup(i, origin_keepalive_timeout, 0)
+      origin_keepalive_timeout = lookup(i, "origin_keepalive_timeout", 0)
       origin_ssl_protocols     = lookup(i, "origin_ssl_protocols", ["SSLv3", "TLSv1.1", "TLSv1.2", "TLSv1"])
       custom_header            = lookup(i, "custom_header", null)
     }]
