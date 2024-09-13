@@ -7,7 +7,3 @@ terraform {
     }
   }
 }
-
-locals {
-  workpace = yamldecode(file("./.workspaces/${terraform.workspace}.yaml"))
-}

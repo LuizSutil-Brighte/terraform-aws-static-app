@@ -54,12 +54,12 @@ resource "aws_cloudfront_distribution" "default" {
       }
 
       custom_origin_config {
-        http_port                = origin.value.http_port
-        https_port               = origin.value.https_port
-        origin_keepalive_timeout = origin.value.origin_keepalive_timeout
-        origin_read_timeout      = origin.value.origin_read_timeout
-        origin_protocol_policy   = origin.value.origin_protocol_policy
-        origin_ssl_protocols     = origin.value.origin_ssl_protocols
+        http_port                = lookup(origin.value, "http_port", null)
+        https_port               = lookup(origin.value, "https_port", null) 
+        origin_keepalive_timeout = lookup(origin.value, "origin_keepalive_timeout", null) 
+        origin_read_timeout      = lookup(origin.value, "origin_read_timeout", null) 
+        origin_protocol_policy   = lookup(origin.value, "origin_protocol_policy", null) 
+        origin_ssl_protocols     = lookup(origin.value, "origin_ssl_protocols", null) 
       }
     }
   }
