@@ -42,7 +42,7 @@ resource "aws_cloudfront_distribution" "default" {
       domain_name = origin.value.domain_name
       origin_id   = origin.value.origin_id
       origin_path = origin.value.path
-      origin_access_control_id = lookup(i, "origin_access_control_id", null)
+      origin_access_control_id = origin.value.origin_access_control_id
 
       dynamic "custom_header" {
         for_each = origin.value.custom_header == null ? [] : [for i in origin.value.custom_header : {
@@ -55,13 +55,17 @@ resource "aws_cloudfront_distribution" "default" {
         }
       }
 
-      custom_origin_config {
-        http_port                = lookup(origin.value, "http_port", null)
-        https_port               = lookup(origin.value, "https_port", null) 
-        origin_keepalive_timeout = lookup(origin.value, "origin_keepalive_timeout", null) 
-        origin_read_timeout      = lookup(origin.value, "origin_read_timeout", null) 
-        origin_protocol_policy   = lookup(origin.value, "origin_protocol_policy", null) 
-        origin_ssl_protocols     = lookup(origin.value, "origin_ssl_protocols", null) 
+      dynamic "custom_origin_config" {
+        for_each = origin.value.origin_access_control_id != null ? {} : origin.value
+        
+        content {
+          http_port                = custom_origin_config.value.http_port
+          https_port               = custom_origin_config.value.https_port
+          origin_keepalive_timeout = custom_origin_config.value.origin_keepalive_timeout
+          origin_read_timeout      = custom_origin_config.value.origin_read_timeout
+          origin_protocol_policy   = custom_origin_config.value.origin_protocol_policy
+          origin_ssl_protocols     = custom_origin_config.value.origin_ssl_protocols
+        }
       }
     }
   }
