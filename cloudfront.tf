@@ -26,6 +26,7 @@ resource "aws_cloudfront_distribution" "default" {
   dynamic "origin" {
     for_each = [for i in var.dynamic_custom_origin_config : {
       domain_name              = i.domain_name
+      origin_access_control_id = lookup(i, "origin_access_control_id", null)
       origin_id                = lookup(i, "origin_id", "default")
       path                     = lookup(i, "origin_path", null)
       http_port                = lookup(i, "http_port", 80)
