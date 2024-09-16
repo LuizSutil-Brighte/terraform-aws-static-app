@@ -35,6 +35,7 @@ resource "aws_cloudfront_distribution" "default" {
       origin_read_timeout      = lookup(i, "origin_read_timeout", 30)
       origin_keepalive_timeout = lookup(i, "origin_keepalive_timeout", 5)
       origin_ssl_protocols     = lookup(i, "origin_ssl_protocols", ["SSLv3", "TLSv1.1", "TLSv1.2", "TLSv1"])
+      origin_access_control_id = lookup(i, origin_access_control_id, null)
       custom_header            = lookup(i, "custom_header", null)
     }]
 
