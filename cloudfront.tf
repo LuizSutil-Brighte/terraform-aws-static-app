@@ -26,7 +26,7 @@ resource "aws_cloudfront_distribution" "default" {
   dynamic "origin" {
     for_each = [for i in var.dynamic_custom_origin_config : {
       domain_name              = i.domain_name
-      origin_access_control_id = lookup(i, "origin_access_control_id", null)
+      
       origin_id                = lookup(i, "origin_id", "default")
       path                     = lookup(i, "origin_path", null)
       http_port                = lookup(i, "http_port", 80)
@@ -42,6 +42,7 @@ resource "aws_cloudfront_distribution" "default" {
       domain_name = origin.value.domain_name
       origin_id   = origin.value.origin_id
       origin_path = origin.value.path
+      origin_access_control_id = lookup(i, "origin_access_control_id", null)
 
       dynamic "custom_header" {
         for_each = origin.value.custom_header == null ? [] : [for i in origin.value.custom_header : {
