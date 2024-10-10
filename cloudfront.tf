@@ -109,6 +109,18 @@ resource "aws_cloudfront_distribution" "default" {
       }
     }
 
+    dynamic "function_association" {
+      for_each = [for i in var.cf_function : {
+        origin_request = i.origin_request
+        include_body   = i.include_body
+        lambda_arn     = i.lambda_arn
+      }]
+      content {
+        event_type   = function_association.value.origin_request
+        function_arn   = function_association.value.function_arn
+      }
+    }
+
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600

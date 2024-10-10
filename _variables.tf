@@ -150,6 +150,11 @@ variable "lambda_edge" {
   description = "Lambda EDGE configuration"
 }
 
+variable "cf_function" {
+  default     = []
+  description = "Cloud function configuration"
+}
+
 variable "default_threshold" {
   description = "The default threshold for the metric."
   default     = 5
