@@ -111,9 +111,8 @@ resource "aws_cloudfront_distribution" "default" {
 
     dynamic "function_association" {
       for_each = [for i in var.cf_function : {
-        origin_request = i.origin_request
-        include_body   = i.include_body
-        lambda_arn     = i.lambda_arn
+        event_type = i.event_type
+        function_arn   = i.function_arn
       }]
       content {
         event_type   = function_association.value.event_type
