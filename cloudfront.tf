@@ -116,7 +116,7 @@ resource "aws_cloudfront_distribution" "default" {
         lambda_arn     = i.lambda_arn
       }]
       content {
-        event_type   = function_association.value.origin_request
+        event_type   = function_association.value.event_type
         function_arn   = function_association.value.function_arn
       }
     }
