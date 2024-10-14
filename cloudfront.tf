@@ -56,6 +56,17 @@ resource "aws_cloudfront_distribution" "default" {
         }
       }
 
+       dynamic "function_association" {
+        for_each = [for i in var.cf_function : {
+          event_type = i.event_type
+          function_arn   = i.function_arn
+        }]
+        content {
+          event_type   = function_association.value.event_type
+          function_arn   = function_association.value.function_arn
+        }
+      }
+
       dynamic "custom_origin_config" {
         for_each = origin.value.origin_access_control_id != null ? {} : origin.value
         
@@ -106,17 +117,6 @@ resource "aws_cloudfront_distribution" "default" {
         event_type   = lambda_function_association.value.origin_request
         include_body = lambda_function_association.value.include_body
         lambda_arn   = lambda_function_association.value.lambda_arn
-      }
-    }
-
-    dynamic "function_association" {
-      for_each = [for i in var.cf_function : {
-        event_type = i.event_type
-        function_arn   = i.function_arn
-      }]
-      content {
-        event_type   = function_association.value.event_type
-        function_arn   = function_association.value.function_arn
       }
     }
 
