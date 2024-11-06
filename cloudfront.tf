@@ -150,21 +150,10 @@ resource "aws_cloudfront_distribution" "default" {
       }
 
       dynamic "function_association" {
-        for_each = [for i in var.cf_function : {
-          event_type = i.event_type
-          function_arn   = i.function_arn
-        }]
-        content {
-          event_type   = function_association.value.event_type
-          function_arn   = function_association.value.function_arn
-        }
-      }
-
-      dynamic "function_association" {
-        for_each = try(cache_behavior.cf_function_redirect,false) == false ? [] : [1]
+        for_each = try(cache_behavior.cf_function_redirect, false) == false ? [] : [1]
         content {
           event_type   = "viewer-request"
-          function_arn   = aws_cloudfront_function.redirect_origin.arn
+          function_arn   = try(var.cf_function_arn, "")
         }
       }
 
@@ -201,29 +190,4 @@ resource "aws_cloudfront_distribution" "default" {
 
 
   web_acl_id = var.cloudfront_web_acl_id != "" ? var.cloudfront_web_acl_id : ""
-}
-
-
-resource "aws_cloudfront_function" "redirect_origin" {
-  count = try(var.dynamic_ordered_cache_behavior.cf_function_redirect, false) ? 0 : 1
-  name    = "Cloudfront"
-  runtime = "cloudfront-js-2.0"
-  comment = "Function for Cloudfront"
-  publish = true
-  code    = <<EOT
-    async function handler(event) {
-      const request = event.request;
-      const uri = request.uri;
-      
-      // Check whether the URI is missing a file name.
-      if (uri.endsWith('/')) {
-          request.uri += 'index.html';
-      } 
-      // Check whether the URI is missing a file extension.
-      else if (!uri.includes('.')) {
-          request.uri += '/index.html';
-      }
-      return request;
-  }
-  EOT
 }

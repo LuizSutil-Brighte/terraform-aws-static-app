@@ -150,8 +150,8 @@ variable "lambda_edge" {
   description = "Lambda EDGE configuration"
 }
 
-variable "cf_function" {
-  default     = []
+variable "cf_function_arn" {
+  default     = ""
   description = "Cloud function configuration"
 }
 
