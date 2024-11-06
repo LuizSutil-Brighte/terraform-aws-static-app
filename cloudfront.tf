@@ -141,7 +141,7 @@ resource "aws_cloudfront_distribution" "default" {
 
       dynamic "function_association" {
         iterator = cf_func
-        for_each = try(cache_behavior.value.use_forwarded_values, false) == false ? [] : ["create"]
+        for_each = try(cache_behavior.value.cf_function_redirect, false) == false ? [] : ["create"]
         content {
           event_type   = "viewer-request"
           function_arn   = try(var.cf_function_arn, "")
