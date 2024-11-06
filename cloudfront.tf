@@ -139,18 +139,9 @@ resource "aws_cloudfront_distribution" "default" {
         }
       }
 
-      dynamic "lambda_function_association" {
-        iterator = lambda
-        for_each = lookup(cache_behavior.value, "lambda_function_association", [])
-        content {
-          event_type   = lambda.value.event_type
-          lambda_arn   = lambda.value.lambda_arn
-          include_body = lookup(lambda.value, "include_body", null)
-        }
-      }
-
       dynamic "function_association" {
-        for_each = try(cache_behavior.cf_function_redirect, false) == false ? [] : [1]
+        iterator = cf_func
+        for_each = lookup(cache_behavior.value, "cf_function_redirect", [])
         content {
           event_type   = "viewer-request"
           function_arn   = try(var.cf_function_arn, "")
