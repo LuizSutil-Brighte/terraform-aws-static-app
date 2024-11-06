@@ -161,7 +161,7 @@ resource "aws_cloudfront_distribution" "default" {
       }
 
       dynamic "function_association" {
-        for_each = cache_behavior.cf_function_redirect == false ? [] : [1]
+        for_each = try(cache_behavior.cf_function_redirect,false) == false ? [] : [1]
         content {
           event_type   = "viewer-request"
           function_arn   = aws_cloudfront_function.redirect_origin.arn
