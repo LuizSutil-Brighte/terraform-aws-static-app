@@ -160,6 +160,14 @@ resource "aws_cloudfront_distribution" "default" {
         }
       }
 
+      dynamic "function_association" {
+        for_each = cache_behavior.cf_function_redirect == false ? [] : [1]
+        content {
+          event_type   = "viewer-request"
+          function_arn   = aws_cloudfront_function.redirect_origin.arn
+        }
+      }
+
 
       viewer_protocol_policy = cache_behavior.value.viewer_protocol_policy
       min_ttl                = lookup(cache_behavior.value, "min_ttl", null)
@@ -193,4 +201,28 @@ resource "aws_cloudfront_distribution" "default" {
 
 
   web_acl_id = var.cloudfront_web_acl_id != "" ? var.cloudfront_web_acl_id : ""
+}
+
+
+resource "aws_cloudfront_function" "redirect_origin" {
+  name    = "Cloudfront"
+  runtime = "cloudfront-js-2.0"
+  comment = "Function for Cloudfront"
+  publish = true
+  code    = <<EOT
+    async function handler(event) {
+      const request = event.request;
+      const uri = request.uri;
+      
+      // Check whether the URI is missing a file name.
+      if (uri.endsWith('/')) {
+          request.uri += 'index.html';
+      } 
+      // Check whether the URI is missing a file extension.
+      else if (!uri.includes('.')) {
+          request.uri += '/index.html';
+      }
+      return request;
+  }
+  EOT
 }
