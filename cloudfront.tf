@@ -205,6 +205,7 @@ resource "aws_cloudfront_distribution" "default" {
 
 
 resource "aws_cloudfront_function" "redirect_origin" {
+  count = try(cache_behavior.cf_function_redirect, false) ? 0 : 1
   name    = "Cloudfront"
   runtime = "cloudfront-js-2.0"
   comment = "Function for Cloudfront"
